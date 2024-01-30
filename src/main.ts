@@ -1,12 +1,11 @@
 import confetti from 'canvas-confetti'
-let puntuacion : number = 0
+let puntuacion = 0
 let carta_dada: number
-let mensajeResultado = document.getElementById('resultado')
-const botonDarCarta = document.getElementById('dame_carta')
-const botonParar = document.getElementById('parar')
-const containerBotones = document.getElementById('dar_reiniciar')
-const siguienteCarta = document.getElementById('siguiente_carta')
-
+let mensajeResultado = document.getElementById('resultado') as HTMLImageElement
+const botonDarCarta = document.getElementById('dame_carta') as HTMLElement
+const botonParar = document.getElementById('parar') as HTMLElement
+const containerBotones = document.getElementById('dar_reiniciar')  as HTMLElement
+const siguienteCarta = document.getElementById('siguiente_carta') as HTMLElement
 
 const muestraPuntuacion = () => {
   const elementoPuntuacion = document.getElementById('puntuacion')
@@ -18,11 +17,20 @@ const muestraPuntuacion = () => {
 
 document.addEventListener('DOMContentLoaded', muestraPuntuacion)
 
-const dameCarta = () => {
-  carta_dada = Math.floor(Math.random() * 10 + 1)
-  if (carta_dada > 7) {
-    carta_dada += 2
+const generarNumeroAleatorio = () => {
+  return Math.floor(Math.random() * 10 + 1)
+}
+
+const quitarOchoyNueve = (numeroAleatorio: number) => {
+  if (numeroAleatorio > 7) {
+    numeroAleatorio += 2
   }
+  return numeroAleatorio
+}
+
+const dameCarta = () => {
+  const numeroAleatorio = generarNumeroAleatorio()
+  return (carta_dada = quitarOchoyNueve(numeroAleatorio))
 }
 
 const sumarPuntuacion = () => {
@@ -31,19 +39,13 @@ const sumarPuntuacion = () => {
   } else {
     puntuacion += carta_dada
   }
-  if (puntuacion === 7.5) {
-    if (mensajeResultado && botonDarCarta && containerBotones) {
-      mensajeResultado.innerHTML = '¡ Lo has clavado! ¡Enhorabuena!'
-      mensajeResultado.setAttribute('class', 'rainbow')
-      confetti()
-      botonDarCarta.remove()
-      containerBotones.innerHTML = `<button type="button" id="reiniciar">Nueva partida 🎇</button>`
-    }
-  }
 }
-const muestraCarta = () => {
-  const imgCarta = document.getElementById('carta') as HTMLImageElement
-  if(imgCarta){switch (carta_dada) {
+
+function cogerImagenCarta() {
+  return document.getElementById('carta') as HTMLImageElement
+}
+function asignarImagenCartaNumeroCorrespondiente(imgCarta: HTMLImageElement) {
+  switch (carta_dada) {
     case 1:
       imgCarta.src =
         'https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/1_as-copas.jpg'
@@ -84,52 +86,68 @@ const muestraCarta = () => {
       imgCarta.src =
         'https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/12_rey-copas.jpg'
       break
-  }}
+  }
+}
+
+const muestraCarta = () => {
+  const imgCarta = cogerImagenCarta()
   
+  asignarImagenCartaNumeroCorrespondiente(imgCarta)
+
 }
 
 const reiniciarJuego = () => {
   location.reload()
 }
 const gestionarPartida = () => {
-  
-  if(mensajeResultado && siguienteCarta && botonDarCarta && containerBotones){
   if (puntuacion <= 4.5) {
     mensajeResultado.innerHTML = `<p>Has sido muy conservador</p>`
-    siguienteCarta.innerHTML = `<p>Hubieses sacado un ${carta_dada}</p>`
+    siguienteCarta.innerHTML = `<p>Hubieses sacado un ${dameCarta()}</p>`
   } else if (puntuacion >= 5 && puntuacion < 6) {
     mensajeResultado.innerHTML = `<p>Te ha entrado el canguelo eh?</p>`
-    siguienteCarta.innerHTML = `<p>Hubieses sacado un ${carta_dada}</p>`
+    siguienteCarta.innerHTML = `<p>Hubieses sacado un ${dameCarta()}</p>`
   } else if (puntuacion >= 6 && puntuacion <= 7) {
     mensajeResultado.innerHTML = `<p>Casi casi..</p>`
-    siguienteCarta.innerHTML = `<p>Hubieses sacado un ${carta_dada}</p>`
+    siguienteCarta.innerHTML = `<p>Hubieses sacado un ${dameCarta()}</p>`
   } else if (puntuacion === 7.5) {
     mensajeResultado.innerHTML = '¡ Lo has clavado! ¡Enhorabuena!'
     mensajeResultado.setAttribute('class', 'rainbow')
     confetti()
   }
-  const botonReiniciar = document.getElementById('reiniciar')
+
   botonDarCarta.remove()
   containerBotones.innerHTML = `<button type="button" id="reiniciar">Nueva partida 🎇</button>`
-  botonReiniciar?.addEventListener('click', reiniciarJuego)}
+  const botonReiniciar = document.getElementById('reiniciar') as HTMLElement
+  botonReiniciar.addEventListener('click', reiniciarJuego)
 }
 
 const gameOver = () => {
-  if(mensajeResultado && botonDarCarta && containerBotones)
   if (puntuacion > 7.5) {
     mensajeResultado.innerHTML = `<p style='color:black; font-size: 3em; text-shadow: 0 0 20px #fff, 0 0 30px #fff, 0 0 50px #fff, 0 0 60px #fff, 0 0 70px #fff'>Game over!</p>`
     botonDarCarta.remove()
     containerBotones.innerHTML = `<button type="button" id="reiniciar">Nueva partida 🎇</button>`
+  } else if (puntuacion === 7.5) {
+    mensajeResultado.innerHTML = '¡ Lo has clavado! ¡Enhorabuena!'
+    mensajeResultado.setAttribute('class', 'rainbow')
+    confetti()
+    botonDarCarta.remove()
+    containerBotones.innerHTML = `<button type="button" id="reiniciar">Nueva partida 🎇</button>`
   }
-  const botonReiniciar = document.getElementById('reiniciar')
-  botonReiniciar?.addEventListener('click', reiniciarJuego)
+  const botonReiniciar = document.getElementById('reiniciar') as HTMLElement
+  botonReiniciar.addEventListener('click', reiniciarJuego)
 }
 
-botonDarCarta?.addEventListener('click', dameCarta)
-botonDarCarta?.addEventListener('click', sumarPuntuacion)
-botonDarCarta?.addEventListener('click', muestraPuntuacion)
-botonDarCarta?.addEventListener('click', muestraCarta)
-botonDarCarta?.addEventListener('click', gameOver)
-botonParar?.addEventListener('click', dameCarta)
-botonParar?.addEventListener('click', gestionarPartida)
-botonParar?.addEventListener('click', gameOver)
+const handleBotonDameCarta = () => {
+  dameCarta()
+  sumarPuntuacion()
+  muestraPuntuacion()
+  muestraCarta()
+  gameOver()
+}
+const handleBotonParar = () => {
+  gestionarPartida()
+  gameOver()
+}
+
+botonDarCarta.addEventListener('click', handleBotonDameCarta)
+botonParar.addEventListener('click', handleBotonParar)
