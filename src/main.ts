@@ -2,8 +2,8 @@ import confetti from 'canvas-confetti'
 let puntuacion = 0
 let carta_dada: number
 let mensajeResultado = document.getElementById('resultado') as HTMLImageElement
-const botonDarCarta = document.getElementById('dame_carta') as HTMLElement
-const botonParar = document.getElementById('parar') as HTMLElement
+const botonDarCarta = document.getElementById('dame_carta') 
+const botonParar = document.getElementById('parar') 
 const containerBotones = document.getElementById('dar_reiniciar')  as HTMLElement
 const siguienteCarta = document.getElementById('siguiente_carta') as HTMLElement
 
@@ -115,7 +115,9 @@ const gestionarPartida = () => {
     confetti()
   }
 
-  botonDarCarta.remove()
+  if(botonDarCarta && botonDarCarta instanceof HTMLButtonElement ){
+    botonDarCarta.remove()
+  }
   containerBotones.innerHTML = `<button type="button" id="reiniciar">Nueva partida 🎇</button>`
   const botonReiniciar = document.getElementById('reiniciar') as HTMLElement
   botonReiniciar.addEventListener('click', reiniciarJuego)
@@ -124,13 +126,18 @@ const gestionarPartida = () => {
 const gameOver = () => {
   if (puntuacion > 7.5) {
     mensajeResultado.innerHTML = `<p style='color:black; font-size: 3em; text-shadow: 0 0 20px #fff, 0 0 30px #fff, 0 0 50px #fff, 0 0 60px #fff, 0 0 70px #fff'>Game over!</p>`
-    botonDarCarta.remove()
+    if(botonDarCarta && botonDarCarta instanceof HTMLButtonElement ){
+      botonDarCarta.remove()
+    }
     containerBotones.innerHTML = `<button type="button" id="reiniciar">Nueva partida 🎇</button>`
   } else if (puntuacion === 7.5) {
     mensajeResultado.innerHTML = '¡ Lo has clavado! ¡Enhorabuena!'
     mensajeResultado.setAttribute('class', 'rainbow')
     confetti()
-    botonDarCarta.remove()
+    if(botonDarCarta && botonDarCarta instanceof HTMLButtonElement ){
+      botonDarCarta.remove()
+    }
+    
     containerBotones.innerHTML = `<button type="button" id="reiniciar">Nueva partida 🎇</button>`
   }
   const botonReiniciar = document.getElementById('reiniciar') as HTMLElement
@@ -149,5 +156,10 @@ const handleBotonParar = () => {
   gameOver()
 }
 
-botonDarCarta.addEventListener('click', handleBotonDameCarta)
-botonParar.addEventListener('click', handleBotonParar)
+if(botonDarCarta && botonDarCarta instanceof HTMLButtonElement ){
+  botonDarCarta.addEventListener('click', handleBotonDameCarta)
+}
+if(botonParar && botonParar instanceof HTMLButtonElement ){
+  botonParar.addEventListener('click', handleBotonParar)
+}
+
