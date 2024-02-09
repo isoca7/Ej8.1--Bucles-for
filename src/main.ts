@@ -1,165 +1,170 @@
-import confetti from 'canvas-confetti'
-let puntuacion = 0
-let carta_dada: number
-let mensajeResultado = document.getElementById('resultado') as HTMLImageElement
-const botonDarCarta = document.getElementById('dame_carta') 
-const botonParar = document.getElementById('parar') 
-const containerBotones = document.getElementById('dar_reiniciar')  as HTMLElement
-const siguienteCarta = document.getElementById('siguiente_carta') as HTMLElement
+type Especialidad = "Medico de familia" | "Pediatra" | "Cardiólogo";
 
-const muestraPuntuacion = () => {
-  const elementoPuntuacion = document.getElementById('puntuacion')
-
-  if (elementoPuntuacion) {
-    elementoPuntuacion.innerHTML = `<h3>Tu puntuación es: <span>${puntuacion}</span></h3>`
-  }
+interface Pacientes {
+  id: number;
+  nombre: string;
+  apellidos: string;
+  sexo: string;
+  temperatura: number;
+  frecuenciaCardiaca: number;
+  especialidad: Especialidad;
+  edad: number;
 }
 
-document.addEventListener('DOMContentLoaded', muestraPuntuacion)
+const pacientes: Pacientes[] = [
+  {
+    id: 1,
+    nombre: "John",
+    apellidos: "Doe",
+    sexo: "Male",
+    temperatura: 36.8,
+    frecuenciaCardiaca: 80,
+    especialidad: "Medico de familia",
+    edad: 44,
+  },
+  {
+    id: 2,
+    nombre: "Jane",
+    apellidos: "Doe",
+    sexo: "Female",
+    temperatura: 36.8,
+    frecuenciaCardiaca: 70,
+    especialidad: "Medico de familia",
+    edad: 43,
+  },
+  {
+    id: 3,
+    nombre: "Junior",
+    apellidos: "Doe",
+    sexo: "Male",
+    temperatura: 36.8,
+    frecuenciaCardiaca: 90,
+    especialidad: "Pediatra",
+    edad: 8,
+  },
+  {
+    id: 4,
+    nombre: "Mary",
+    apellidos: "Wien",
+    sexo: "Female",
+    temperatura: 36.8,
+    frecuenciaCardiaca: 120,
+    especialidad: "Medico de familia",
+    edad: 20,
+  },
+  {
+    id: 5,
+    nombre: "Scarlett",
+    apellidos: "Somez",
+    sexo: "Female",
+    temperatura: 36.8,
+    frecuenciaCardiaca: 110,
+    especialidad: "Cardiólogo",
+    edad: 30,
+  },
+  {
+    id: 6,
+    nombre: "Brian",
+    apellidos: "Kid",
+    sexo: "Male",
+    temperatura: 39.8,
+    frecuenciaCardiaca: 80,
+    especialidad: "Pediatra",
+    edad: 11,
+  },
+];
 
-const generarNumeroAleatorio = () => {
-  return Math.floor(Math.random() * 10 + 1)
+const obtenPacientesAsignadosAPediatria = (
+  pacientes: Pacientes[]
+): Pacientes[] => {
+  let resultado: Pacientes[] = [];
+  pacientes.forEach((paciente) => {
+    if (paciente.especialidad === "Pediatra") {
+      resultado.push(paciente);
+    }
+  });
+  return resultado;
+};
+
+const obtenPacientesAsignadosAPediatriaYMenorDeDiezAnios = (
+  pacientes: Pacientes[]
+): Pacientes[] => {
+  let resultado: Pacientes[] = [];
+  pacientes.forEach((paciente) => {
+    if (paciente.especialidad === "Pediatra" && paciente.edad < 10) {
+      resultado.push(paciente);
+    }
+  });
+  return resultado;
+};
+
+const activarProtocoloUrgencia = (pacientes: Pacientes[]): boolean => {
+  let activarProctolo = false;
+  activarProctolo = pacientes.some(
+    (paciente) => paciente.temperatura > 39 || paciente.frecuenciaCardiaca > 100
+  );
+  return activarProctolo;
+};
+
+const reasignaPacientesAMedicoFamilia = (
+  pacientes: Pacientes[]
+): Pacientes[] => {
+  let resultado: Pacientes[] = [...pacientes];
+  resultado.forEach((paciente) => {
+    if (paciente.especialidad === "Pediatra") {
+      paciente.especialidad = "Medico de familia";
+    }
+  });
+  return resultado;
+};
+
+const HayPacientesDePediatria = (pacientes: Pacientes[]): boolean => {
+  let sePuedeIrACasa = false;
+  sePuedeIrACasa = pacientes.some(
+    (paciente) => paciente.especialidad === "Pediatra"
+  );
+  return sePuedeIrACasa;
+};
+
+interface NumeroPacientesPorEspecialidad {
+  medicoDeFamilia: number;
+  pediatria: number;
+  cardiologia: number;
 }
 
-const quitarOchoyNueve = (numeroAleatorio: number) => {
-  if (numeroAleatorio > 7) {
-    numeroAleatorio += 2
-  }
-  return numeroAleatorio
-}
-
-const dameCarta = () => {
-  const numeroAleatorio = generarNumeroAleatorio()
-  return (carta_dada = quitarOchoyNueve(numeroAleatorio))
-}
-
-const sumarPuntuacion = () => {
-  if (carta_dada > 7) {
-    puntuacion += 0.5
-  } else {
-    puntuacion += carta_dada
-  }
-}
-
-function cogerImagenCarta() {
-  return document.getElementById('carta') as HTMLImageElement
-}
-function asignarImagenCartaNumeroCorrespondiente(imgCarta: HTMLImageElement) {
-  switch (carta_dada) {
-    case 1:
-      imgCarta.src =
-        'https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/1_as-copas.jpg'
-      break
-    case 2:
-      imgCarta.src =
-        'https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/2_dos-copas.jpg'
-      break
-    case 3:
-      imgCarta.src =
-        'https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/3_tres-copas.jpg'
-      break
-    case 4:
-      imgCarta.src =
-        'https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/4_cuatro-copas.jpg'
-      break
-    case 5:
-      imgCarta.src =
-        'https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/5_cinco-copas.jpg'
-      break
-    case 6:
-      imgCarta.src =
-        'https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/6_seis-copas.jpg'
-      break
-    case 7:
-      imgCarta.src =
-        'https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/7_siete-copas.jpg'
-      break
-    case 10:
-      imgCarta.src =
-        'https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/10_sota-copas.jpg'
-      break
-    case 11:
-      imgCarta.src =
-        'https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/11_caballo-copas.jpg'
-      break
-    case 12:
-      imgCarta.src =
-        'https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/12_rey-copas.jpg'
-      break
-  }
-}
-
-const muestraCarta = () => {
-  const imgCarta = cogerImagenCarta()
+const cuentaPacientesPorEspecialidad = (
+  pacientes: Pacientes[]
+): NumeroPacientesPorEspecialidad => {
+  let cardiologos: number 
+  let pediatras: number 
+  let medicosFamilia: number 
+ 
+    cardiologos  = pacientes.reduce((contador: number, obj) => {
+      if (obj.especialidad === "Cardiólogo") contador += 1;
+      return contador;
+    }, 0);
+    pediatras= pacientes.reduce((contador: number, obj) => {
+      if (obj.especialidad === "Pediatra") contador += 1;
+      return contador;
+    }, 0);
+    medicosFamilia = pacientes.reduce((contador: number, obj) => {
+      if (obj.especialidad === "Medico de familia") contador += 1;
+      return contador;
+    }, 0);
   
-  asignarImagenCartaNumeroCorrespondiente(imgCarta)
+  let resultado: NumeroPacientesPorEspecialidad = {
+    medicoDeFamilia: medicosFamilia,
+    pediatria: pediatras,
+    cardiologia: cardiologos,
+  };
+  return resultado
+};
 
-}
-
-const reiniciarJuego = () => {
-  location.reload()
-}
-const gestionarPartida = () => {
-  if (puntuacion <= 4.5) {
-    mensajeResultado.innerHTML = `<p>Has sido muy conservador</p>`
-    siguienteCarta.innerHTML = `<p>Hubieses sacado un ${dameCarta()}</p>`
-  } else if (puntuacion >= 5 && puntuacion < 6) {
-    mensajeResultado.innerHTML = `<p>Te ha entrado el canguelo eh?</p>`
-    siguienteCarta.innerHTML = `<p>Hubieses sacado un ${dameCarta()}</p>`
-  } else if (puntuacion >= 6 && puntuacion <= 7) {
-    mensajeResultado.innerHTML = `<p>Casi casi..</p>`
-    siguienteCarta.innerHTML = `<p>Hubieses sacado un ${dameCarta()}</p>`
-  } else if (puntuacion === 7.5) {
-    mensajeResultado.innerHTML = '¡ Lo has clavado! ¡Enhorabuena!'
-    mensajeResultado.setAttribute('class', 'rainbow')
-    confetti()
-  }
-
-  if(botonDarCarta && botonDarCarta instanceof HTMLButtonElement ){
-    botonDarCarta.remove()
-  }
-  containerBotones.innerHTML = `<button type="button" id="reiniciar">Nueva partida 🎇</button>`
-  const botonReiniciar = document.getElementById('reiniciar') as HTMLElement
-  botonReiniciar.addEventListener('click', reiniciarJuego)
-}
-
-const gameOver = () => {
-  if (puntuacion > 7.5) {
-    mensajeResultado.innerHTML = `<p style='color:black; font-size: 3em; text-shadow: 0 0 20px #fff, 0 0 30px #fff, 0 0 50px #fff, 0 0 60px #fff, 0 0 70px #fff'>Game over!</p>`
-    if(botonDarCarta && botonDarCarta instanceof HTMLButtonElement ){
-      botonDarCarta.remove()
-    }
-    containerBotones.innerHTML = `<button type="button" id="reiniciar">Nueva partida 🎇</button>`
-  } else if (puntuacion === 7.5) {
-    mensajeResultado.innerHTML = '¡ Lo has clavado! ¡Enhorabuena!'
-    mensajeResultado.setAttribute('class', 'rainbow')
-    confetti()
-    if(botonDarCarta && botonDarCarta instanceof HTMLButtonElement ){
-      botonDarCarta.remove()
-    }
-    
-    containerBotones.innerHTML = `<button type="button" id="reiniciar">Nueva partida 🎇</button>`
-  }
-  const botonReiniciar = document.getElementById('reiniciar') as HTMLElement
-  botonReiniciar.addEventListener('click', reiniciarJuego)
-}
-
-const handleBotonDameCarta = () => {
-  dameCarta()
-  sumarPuntuacion()
-  muestraPuntuacion()
-  muestraCarta()
-  gameOver()
-}
-const handleBotonParar = () => {
-  gestionarPartida()
-  gameOver()
-}
-
-if(botonDarCarta && botonDarCarta instanceof HTMLButtonElement ){
-  botonDarCarta.addEventListener('click', handleBotonDameCarta)
-}
-if(botonParar && botonParar instanceof HTMLButtonElement ){
-  botonParar.addEventListener('click', handleBotonParar)
-}
+console.log(obtenPacientesAsignadosAPediatria(pacientes));
+console.log(obtenPacientesAsignadosAPediatriaYMenorDeDiezAnios(pacientes));
+console.log(activarProtocoloUrgencia(pacientes));
+console.log(reasignaPacientesAMedicoFamilia(pacientes));
+console.log(pacientes)
+console.log(HayPacientesDePediatria(pacientes));
+console.log(cuentaPacientesPorEspecialidad(pacientes));
 
